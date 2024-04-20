@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Potion Craft v0.2</title>
+    <style>
+        body{
+            background-color: rgb(255, 112, 0);
+            color:rgb(146, 96, 63);
+        }
+    </style>
+    <link rel="icon" href="logo.png" type="images/x-icon">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.7.0/lib/p5.js"></script>
+    <script>
+        let img;
+        let ex;
+        function preload(){
+            const imgP = [loadImage("10.png"), loadImage("11.png"), loadImage("12.png"), loadImage("13.png")]
+            const exP=[loadImage("cauldron.png")]
+            img=imgP
+            ex=exP
+        }
+        function setup(){
+            createCanvas(displayWidth-200, displayHeight-300)
+        }
+        let ing=[];
+        let ins=[1, 1, 2, 2, 3, 3, 4, 4];
+        let g=4;
+        let c=0;
+        let cl=5
+        let d= 1;
+        const recipe=[
+            {
+                i:"Healing",
+                r:["Clingroot", "Waterbloom"],
+                p:10,
+                v:25
+            },
+            {
+                i:"Poisoning",
+                r:["Clingroot", "Flamebell"],
+                p:11,
+                v:33
+            },
+            {
+                i:"Fire",
+                r:["Flamebell", "Flamebell", "Flamebell"],
+                p:12,
+                v:61
+            },
+            {
+                i:"Frost",
+                r:["Waterbloom", "Waterbloom"],
+                p:13,
+                v:50
+            },
+        ]
+        let cw=Math.floor(Math.random()*4)
+        function draw(){
+            let dw=width
+            let dh=height
+            //try{
+            background(200,175,125)
+            fill(150, 100, 60)
+            noStroke()
+            //ellipse(dw/2, dh*2/3, dw/10, dw/10)
+            imageMode(CENTER)
+            image(ex[0], dw/2, dh*7/12, dw/5, dw/5)
+            textAlign(CENTER, CENTER)
+            fill("green")
+            textSize(20)
+            text("Ingredients in the cauldron: \n"+ing, dw/2, dh*13/15)
+            text("Day "+d+"\nYou have "+c+" gold"+(cl?"\nCustomer Wants: \n"+recipe[cw].i+" Potion":""), dw/2, dh*2/15)
+            fill(210, 195, 155)
+            rect(dw*2/3, 0, dw/3, dh)
+            for(let i=0;i<ins.length;i++){
+                let w=0
+                switch(ins[i]){
+                    case 1:
+                        fill("brown")
+                        break;
+                    case 2:
+                        fill("red")
+                        break;
+                    case 3:
+                        fill("blue")
+                        break;
+                    case 4:
+                        fill("grey")
+                        break;
+                    default:
+                        w=1
+                }
+                let y=Math.floor(i/3)
+                let x=i-(y*3)
+                if(!w){
+                    ellipse(x*((dw/15)+100)+(dw/15*11), y*((dh/10)+100)+(dh/10), 100)
+                }else{
+                    imageMode(CENTER)
+                    let w = ins[i]-10
+                    try{
+                        image(img[w], x*((dw/15)+100)+(dw/15*11), y*((dh/10)+100)+(dh/10), 120, 120)
+                    }catch{
+                        image(img[0], x*((dw/15)+100)+(dw/15*11), y*((dh/10)+100)+(dh/10), 120, 120)
+                    }
+                }
+            }
+            //}catch{}
+        }
+        let z;
+        function keyTyped(){
+            switch(key){
+                case "1":
+                    z=ins.indexOf(1)
+                    if(z!=-1){
+                        ing.push("Clingroot")
+                        ins.splice(z, 1)
+                    }
+                    break;
+                case " ":
+                    ing=[]
+                    break;
+                case "b":
+                    ing.sort()
+                    console.log("f")
+                    for(var i=0;i<recipe.length;i++){
+                        console.log(recipe[i].r+" "+ing)
+                        if(ing.length===recipe[i].r.length){
+                            let x=1
+                            for(var j=0;j<ing.length;j++){
+                                console.log(ing[j])
+                                console.log(recipe[i].r[j])
+                                try{
+                                    if(ing[j]!=recipe[i].r[j]){
+                                        x=0
+                                        break;
+                                    }
+                                }catch{
+                                    x=0
+                                    break;
+                                }
+                            }
+                            if(x===1){
+                                ing=[]
+                                ins.push(recipe[i].p)
+                            }
+                        }
+                    }
+                    break;
+                case "2":
+                    z=ins.indexOf(2)
+                    if(z!=-1){
+                        ing.push("Flamebell")
+                        ins.splice(z, 1)
+                    }
+                    break;
+                case "3":
+                    z=ins.indexOf(3)
+                    if(z!=-1){
+                        ing.push("Waterbloom")
+                        ins.splice(z, 1)
+                    }
+                    break;
+                case "s":
+                    for(let i=0;i<ins.length;i++){
+                        if(ins[i]===recipe[cw].p){
+                            ins.splice(i, 1)
+                            c+=recipe[cw].v
+                            cw=Math.floor(Math.random()*4)
+                            cl--
+                        }
+                    }
+                    break;
+                case "d":
+                    cw=Math.floor(Math.random()*4)
+                    cl--
+            }
+        }
+        setInterval(function(){
+            ins.push(Math.floor(Math.random()*g+1))
+            d++
+            cl+=5
+            //g++;
+        }, 30000)
+    </script>
+</body>
+</html>
